@@ -71,7 +71,9 @@ isLegal ( K (col1,row1) ) _ (col2,row2) = abs (row1 - row2) < 2 && abs ( charDif
 
 isLegal ( Q (col1,row1) ) _ (col2,row2) = (abs (row1 - row2) < 2 && abs ( charDiff col1 col2 ) < 2) || (row1 == row2 && not (col1 == col2)) || (not (row1 == row2) && col1 == col2) || abs( charDiff col1 col2 ) == abs( row2 - row1 )
 
-isLegal ( P (col1,row1) ) _ (col2,row2) = ((row1 == 2 || row1 == 7 ) && abs (row2 - row1) == 2) || (row2 - row1) == 1 || (((row2 - row1) == 1) && (abs (charDiff col1 col2)) == 1)
+isLegal ( P (col1,row1) ) _ (col2,row2) | (row1 == 2  && (row2 - row1) == 2) || (row2 - row1) == 1 || (((row2 - row1) == 1) && (abs (charDiff col1 col2)) == 1) = True
+                                        | (row1 == 7  && (row1 - row2) == 2) || (row2 - row1) == 1 || (((row2 - row1) == 1) && (abs (charDiff col1 col2)) == 1) = True
+                                        | otherwise = False
 
 charDiff c1 c2 =  (ord c1) - (ord c2)
 
