@@ -59,51 +59,67 @@ returnNext c = chr (ord c + 1)
 
 
 
+isLegal:: Piece -> Board -> Location -> Bool
+
+isLegal ( N (col1,row1) ) _ (col2,row2) = (abs (charDiff col1 col2) == 2 || abs (charDiff col1 col2) == 1) && (abs (row2 - row1) == 2 || abs (row2 - row1) == 1)
+
+isLegal ( B (col1,row1) ) _ (col2,row2) = abs( charDiff col1 col2 ) == abs( row2 - row1 )
+
+isLegal ( R (col1,row1) ) _ (col2,row2) = (row1 == row2 && not (col1 == col2)) || (not (row1 == row2) && col1 == col2) 
+
+isLegal ( K (col1,row1) ) _ (col2,row2) = abs (row1 - row2) < 2 && abs ( charDiff col1 col2 ) < 2
+
+isLegal ( Q (col1,row1) ) _ (col2,row2) = (abs (row1 - row2) < 2 && abs ( charDiff col1 col2 ) < 2) || (row1 == row2 && not (col1 == col2)) || (not (row1 == row2) && col1 == col2) || abs( charDiff col1 col2 ) == abs( row2 - row1 )
+
+isLegal ( P (col1,row1) ) _ (col2,row2) = ((row1 == 2 || row1 == 7 ) && abs (row2 - row1) == 2) || (row2 - row1) == 1 || (((row2 - row1) == 1) && (abs (charDiff col1 col2)) == 1)
+
+charDiff c1 c2 =  (ord c1) - (ord c2)
+
 move:: Piece -> Location -> Board -> Board
 
 
-move (P (c1,i1)) (c2,i2) (p,wp,bp) | (taken (c2,i2) wp) || (taken (c2,i2) bp) = error "this place is already taken"
+move (P (c1,i1)) (c2,i2) (p,wp,bp) 
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
-                                   | !isLegal = error "Illegal move for piece " + (show (P (c1,i1)))
+                                   | not (isLegal (P (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (P (c1,i1))))
                                    | p == White = (Black, (replace (P (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (P (c1,i1)) (c2,i2) bp))
 
-move (N (c1,i1)) (c2,i2) (p,wp,bp) | (taken (c2,i2) wp) || (taken (c2,i2) bp) = error "this place is already taken"
+move (N (c1,i1)) (c2,i2) (p,wp,bp) 
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
-                                   | !isLegal = error "Illegal move for piece " + (show (N (c1,i1)))
+                                   | not (isLegal (N (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (N (c1,i1))))
                                    | p == White = (Black, (replace (N (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (N (c1,i1)) (c2,i2) bp))
 
 
-move (K (c1,i1)) (c2,i2) (p,wp,bp) | (taken (c2,i2) wp) || (taken (c2,i2) bp) = error "this place is already taken"
+move (K (c1,i1)) (c2,i2) (p,wp,bp) 
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
-                                   | !isLegal = error "Illegal move for piece " + (show (K (c1,i1)))
+                                   | not (isLegal (K (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (K (c1,i1))))
                                    | p == White = (Black, (replace (K (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (K (c1,i1)) (c2,i2) bp))
 
 
-move (Q (c1,i1)) (c2,i2) (p,wp,bp) | (taken (c2,i2) wp) || (taken (c2,i2) bp) = error "this place is already taken"
+move (Q (c1,i1)) (c2,i2) (p,wp,bp) 
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
-                                   | !isLegal = error "Illegal move for piece " + (show (Q (c1,i1)))
+                                   | (isLegal (Q (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (Q (c1,i1))))
                                    | p == White = (Black, (replace (Q (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (Q (c1,i1)) (c2,i2) bp))
 
 
-move (R (c1,i1)) (c2,i2) (p,wp,bp) | (taken (c2,i2) wp) || (taken (c2,i2) bp) = error "this place is already taken"
+move (R (c1,i1)) (c2,i2) (p,wp,bp) 
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
-                                   | !isLegal = error "Illegal move for piece " + (show (R (c1,i1)))
+                                   | not (isLegal (R (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (R (c1,i1))))
                                    | p == White = (Black, (replace (R (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (R (c1,i1)) (c2,i2) bp))
 
-move (B (c1,i1)) (c2,i2) (p,wp,bp) | (taken (c2,i2) wp) || (taken (c2,i2) bp) = error "this place is already taken"
+move (B (c1,i1)) (c2,i2) (p,wp,bp) 
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
-                                   | !isLegal = error "Illegal move for piece " + (show (B (c1,i1)))
+                                   | not (isLegal (B (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (B (c1,i1))))
                                    | p == White = (Black, (replace (B (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (B (c1,i1)) (c2,i2) bp))
 
