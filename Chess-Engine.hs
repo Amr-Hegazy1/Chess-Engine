@@ -19,9 +19,9 @@ setBoard = 	(White,[R ('h',1),N ('g',1),B ('f',1),K ('e',1),Q ('d',1),B ('c',1),
 
 
 
-visualizeBoard:: Board->IO()
+visualizeBoard:: Board->String
 
-visualizeBoard (p,wp,bp) = putStr (printf ("   a    b    c    d    e    f    g    h\n8 |"  ++ (visualizeBoardHelper 'a' 8  wp bp) ++ "\n\nTurn: " ++ (show p)))
+visualizeBoard (p,wp,bp) =  "    a    b    c    d    e    f    g    h\n8 |"  ++ (visualizeBoardHelper 'a' 8  wp bp) ++ "\n\nTurn: " ++ (show p)
 
 
 visualizeBoardHelper 'h' 1 wp bp | not (find 'h' 1 White wp == "")  = (find 'h' 1 White wp) ++ " |"
