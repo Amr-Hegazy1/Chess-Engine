@@ -21,43 +21,49 @@ setBoard = 	(White,[R ('h',1),N ('g',1),B ('f',1),K ('e',1),Q ('d',1),B ('c',1),
 
 visualizeBoard:: Board->IO()
 
-visualizeBoard (p,wp,bp) = putStr (printf ("    a    b    c    d    e    f    g    h\n8|"  ++ (visualizeBoardHelper 'a' 8  wp bp) ++ "\n\nTurn: " ++ (show p)))
+visualizeBoard (p,wp,bp) = putStr (printf ("   a    b    c    d    e    f    g    h\n8 |"  ++ (visualizeBoardHelper 'a' 8  wp bp) ++ "\n\nTurn: " ++ (show p)))
 
 
-visualizeBoardHelper 'h' 1 wp bp = (find 'h' 1 White wp) ++ (find 'h' 1 Black bp)
+visualizeBoardHelper 'h' 1 wp bp | not (find 'h' 1 White wp == "")  = (find 'h' 1 White wp) ++ " |"
+                                 | not (find 'h' 1 Black bp == "") = (find 'h' 1 Black bp) ++  " |"
+                                 | otherwise = "    |"
 
-visualizeBoardHelper 'h' i wp bp = (find 'h' i White wp) ++ (find 'h' i Black bp) ++ "\n" ++ (show (i-1)) ++ "|" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
+
+visualizeBoardHelper 'h' i wp bp | not (find 'h' i White wp == "") = (find 'h' i White wp) ++ " |\n" ++ (show (i-1)) ++ "|" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
+                                 | not (find 'h' i Black bp == "") =  (find 'h' i Black bp) ++ " |\n" ++ (show (i-1)) ++ "|" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
+                                 | otherwise =  "    |\n" ++ (show (i-1)) ++ " |" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
 
 
-
-visualizeBoardHelper c i wp bp = (find c i White wp) ++ (find c i Black bp) ++ "|" ++ (visualizeBoardHelper (returnNext c) i wp bp)
+visualizeBoardHelper c i wp bp | not (find c i White wp == "") =  (find c i White wp) ++ " |" ++ (visualizeBoardHelper (returnNext c) i wp bp)
+                               | not (find c i Black bp == "") = (find c i Black bp) ++ " |" ++ (visualizeBoardHelper (returnNext c) i wp bp)
+                               | otherwise = "    |" ++ (visualizeBoardHelper (returnNext c) i wp bp)
 
 find _ _ White [] = ""
 find _ _ Black [] = ""
 
-find c i p (P (col,row):t) | col == c && row == i && p == White =  " PW " 
-                           | col == c && row == i && p == Black =  " PB "
+find c i p (P (col,row):t) | col == c && row == i && p == White =  " PW" 
+                           | col == c && row == i && p == Black =  " PB"
                            | otherwise = find c i p t
 
-find c i p (N (col,row):t) | col == c && row == i && p == White =  " NW " 
-                           | col == c && row == i && p == Black =  " NB "
+find c i p (N (col,row):t) | col == c && row == i && p == White =  " NW" 
+                           | col == c && row == i && p == Black =  " NB"
                            | otherwise = find c i p t
 
 
-find c i p (K (col,row):t) | col == c && row == i && p == White =  " KW " 
-                           | col == c && row == i && p == Black =  " KB "
+find c i p (K (col,row):t) | col == c && row == i && p == White =  " KW" 
+                           | col == c && row == i && p == Black =  " KB"
                            | otherwise = find c i p t
 
-find c i p (Q (col,row):t) | col == c && row == i && p == White =  " QW " 
-                           | col == c && row == i && p == Black =  " QB "
+find c i p (Q (col,row):t) | col == c && row == i && p == White =  " QW" 
+                           | col == c && row == i && p == Black =  " QB"
                            | otherwise = find c i p t
 
-find c i p (R (col,row):t) | col == c && row == i && p == White =  " RW " 
-                           | col == c && row == i && p == Black =  " RB "
+find c i p (R (col,row):t) | col == c && row == i && p == White =  " RW" 
+                           | col == c && row == i && p == Black =  " RB"
                            | otherwise = find c i p t
 
-find c i p (B (col,row):t) | col == c && row == i && p == White =  " BW " 
-                           | col == c && row == i && p == Black =  " BB "
+find c i p (B (col,row):t) | col == c && row == i && p == White =  " BW" 
+                           | col == c && row == i && p == Black =  " BB"
                            | otherwise = find c i p t
 
 
@@ -146,41 +152,41 @@ oppositeTurn turn	| turn == White = Black
 {-second cond: checks if there is that piece on the board to be moved-}
 isLegal:: Piece -> Board -> Location -> Bool
 
-isLegal ( N (col1,row1) ) (turn,whiteP,blackP) (col2,row2)  | outOfBounds (col2,row2) = False
+isLegal ( N (col1,row1) ) (_,whiteP,blackP) (col2,row2)  | outOfBounds (col2,row2) = False
 															| not ((checkSame ( N (col1,row1) ) whiteP) || (checkSame ( N (col1,row1) ) blackP)) = False
 															| ((checkSame ( N (col1,row1) ) whiteP) && friendly col2 row2 White whiteP blackP) || ((checkSame ( N (col1,row1) ) blackP) && friendly col2 row2 Black whiteP blackP) = False
-															| ((abs (charDiff col1 col2)) == 2) && ((abs (row2 - row1)) == 1) && not (friendly col2 row2 turn whiteP blackP) = True
-															| ((abs (charDiff col1 col2)) == 1) && ((abs (row2 - row1)) == 2) && not (friendly col2 row2 turn whiteP blackP) = True
+															| ((abs (charDiff col1 col2)) == 2) && ((abs (row2 - row1)) == 1) = True
+															| ((abs (charDiff col1 col2)) == 1) && ((abs (row2 - row1)) == 2) = True
 															| otherwise = False
 										
-isLegal ( B (col1,row1) ) (turn,whiteP,blackP) (col2,row2) 	| outOfBounds (col2,row2) = False
+isLegal ( B (col1,row1) ) (_,whiteP,blackP) (col2,row2) 	| outOfBounds (col2,row2) = False
 															| not ((checkSame ( B (col1,row1) ) whiteP) || (checkSame ( B (col1,row1) ) blackP)) = False
 															| ((checkSame ( B (col1,row1) ) whiteP) && friendly col2 row2 White whiteP blackP) || ((checkSame ( B (col1,row1) ) blackP) && friendly col2 row2 Black whiteP blackP) = False
 															| not(checkPath (col1,row1) (whiteP,blackP) (col2,row2)) = False
-															| (abs( charDiff col1 col2 ) == abs( row2 - row1 )) && not (friendly col2 row2 turn whiteP blackP) = True
+															| (abs( charDiff col1 col2 ) == abs( row2 - row1 )) = True
 															| otherwise = False
 
-isLegal ( Q (col1,row1) ) (turn,whiteP,blackP) (col2,row2) 	| outOfBounds (col2,row2) = False
+isLegal ( Q (col1,row1) ) (_,whiteP,blackP) (col2,row2) 	| outOfBounds (col2,row2) = False
 															| not ((checkSame ( Q (col1,row1) ) whiteP) || (checkSame ( Q (col1,row1) ) blackP)) = False															
 															| ((checkSame ( Q (col1,row1) ) whiteP) && friendly col2 row2 White whiteP blackP) || ((checkSame ( Q (col1,row1) ) blackP) && friendly col2 row2 Black whiteP blackP) = False
 															| not(checkPath (col1,row1) (whiteP,blackP) (col2,row2)) = False
 															| (row1 == row2 && not (col1 == col2)) || (not (row1 == row2) && col1 == col2) || abs( charDiff col1 col2 ) == abs( row2 - row1 ) = True
 															| otherwise = False
 										
-isLegal ( R (col1,row1) ) (turn,whiteP,blackP) (col2,row2) 	| outOfBounds (col2,row2) = False
+isLegal ( R (col1,row1) ) (_,whiteP,blackP) (col2,row2) 	| outOfBounds (col2,row2) = False
 															| not ((checkSame ( R (col1,row1) ) whiteP) || (checkSame ( R (col1,row1) ) blackP)) = False
 															| ((checkSame ( R (col1,row1) ) whiteP) && friendly col2 row2 White whiteP blackP) || ((checkSame ( R (col1,row1) ) blackP) && friendly col2 row2 Black whiteP blackP) = False
 															| not(checkPath (col1,row1) (whiteP,blackP) (col2,row2)) = False
-															| (row1 == row2 && not (col1 == col2)) || (not (row1 == row2) && col1 == col2) && not (friendly col2 row2 turn whiteP blackP) = True
+															| (row1 == row2 && not (col1 == col2)) || (not (row1 == row2) && col1 == col2) = True
 															| otherwise = False
 										
-isLegal ( K (col1,row1) ) (turn,whiteP,blackP) (col2,row2) 	| outOfBounds (col2,row2) = False
+isLegal ( K (col1,row1) ) (_,whiteP,blackP) (col2,row2) 	| outOfBounds (col2,row2) = False
 															| not ((checkSame ( K (col1,row1) ) whiteP) || (checkSame ( K (col1,row1) ) blackP)) = False															
 															| ((checkSame ( K (col1,row1) ) whiteP) && friendly col2 row2 White whiteP blackP) || ((checkSame ( K (col1,row1) ) blackP) && friendly col2 row2 Black whiteP blackP) = False
-															| abs (row1 - row2) < 2 && abs ( charDiff col1 col2 ) < 2 && not (friendly col2 row2 turn whiteP blackP) = True
+															| abs (row1 - row2) < 2 && abs ( charDiff col1 col2 ) < 2 = True
 															| otherwise = False
 
-isLegal ( P (col1,row1) ) (turn,whiteP,blackP) (col2,row2)  | outOfBounds (col2,row2) = False 
+isLegal ( P (col1,row1) ) (_,whiteP,blackP) (col2,row2)  | outOfBounds (col2,row2) = False 
 															| not ((checkSame ( P (col1,row1) ) whiteP) || (checkSame ( P (col1,row1) ) blackP)) = False															
 															| ((checkSame ( P (col1,row1) ) whiteP) && friendly col2 row2 White whiteP blackP) || ((checkSame ( P (col1,row1) ) blackP) && friendly col2 row2 Black whiteP blackP) = False
 {-White piece-}												| (checkSame ( P (col1,row1) ) whiteP) && row1 == 2 && row2 == 4 && col1==col2 && not (taken (col2,3) (whiteP)) && not (taken (col2,3) (blackP)) && not (taken (col2,4) (whiteP)) && not (taken (col2,4) (blackP))= True
@@ -344,7 +350,7 @@ move (K (c1,i1)) (c2,i2) (p,wp,bp)
 move (Q (c1,i1)) (c2,i2) (p,wp,bp) 
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
-                                   | (isLegal (Q (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (Q (c1,i1))))
+                                   | not (isLegal (Q (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (Q (c1,i1))))
                                    | p == White = (Black, (replace (Q (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (Q (c1,i1)) (c2,i2) bp))
 
