@@ -2,6 +2,7 @@ import Data.Char
 import Text.Printf
 
 
+
 type Location = (Char, Int)
 data Player = White | Black deriving (Show, Eq)
 data Piece = P Location | N Location | K Location | Q Location | R Location | B Location deriving (Show, Eq)
@@ -29,8 +30,8 @@ visualizeBoardHelper 'h' 1 wp bp | not (find 'h' 1 White wp == "")  = (find 'h' 
                                  | otherwise = "    |"
 
 
-visualizeBoardHelper 'h' i wp bp | not (find 'h' i White wp == "") = (find 'h' i White wp) ++ " |\n" ++ (show (i-1)) ++ "|" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
-                                 | not (find 'h' i Black bp == "") =  (find 'h' i Black bp) ++ " |\n" ++ (show (i-1)) ++ "|" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
+visualizeBoardHelper 'h' i wp bp | not (find 'h' i White wp == "") = (find 'h' i White wp) ++ " |\n" ++ (show (i-1)) ++ " |" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
+                                 | not (find 'h' i Black bp == "") =  (find 'h' i Black bp) ++ " |\n" ++ (show (i-1)) ++ " |" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
                                  | otherwise =  "    |\n" ++ (show (i-1)) ++ " |" ++ (visualizeBoardHelper 'a' (i-1) wp bp)
 
 
@@ -328,6 +329,8 @@ move (P (c1,i1)) (c2,i2) (p,wp,bp)
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
                                    | not (isLegal (P (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (P (c1,i1))))
+                                   | taken (c2,i2) bp && p == White = (Black,(replace (P (c1,i1)) (c2,i2) wp), delete (c2,i2) bp)
+                                   | taken (c2,i2) wp && p == Black = (White, delete (c2,i2) wp ,(replace (P (c1,i1)) (c2,i2) bp))
                                    | p == White = (Black, (replace (P (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (P (c1,i1)) (c2,i2) bp))
 
@@ -335,6 +338,8 @@ move (N (c1,i1)) (c2,i2) (p,wp,bp)
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
                                    | not (isLegal (N (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (N (c1,i1))))
+                                   | taken (c2,i2) bp && p == White = (Black,(replace (N (c1,i1)) (c2,i2) wp), delete (c2,i2) bp)
+                                   | taken (c2,i2) wp && p == Black = (White, delete (c2,i2) wp ,(replace (N (c1,i1)) (c2,i2) bp))
                                    | p == White = (Black, (replace (N (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (N (c1,i1)) (c2,i2) bp))
 
@@ -343,6 +348,8 @@ move (K (c1,i1)) (c2,i2) (p,wp,bp)
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
                                    | not (isLegal (K (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (K (c1,i1))))
+                                   | taken (c2,i2) bp && p == White = (Black,(replace (K (c1,i1)) (c2,i2) wp), delete (c2,i2) bp)
+                                   | taken (c2,i2) wp && p == Black = (White, delete (c2,i2) wp ,(replace (K (c1,i1)) (c2,i2) bp))
                                    | p == White = (Black, (replace (K (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (K (c1,i1)) (c2,i2) bp))
 
@@ -351,6 +358,8 @@ move (Q (c1,i1)) (c2,i2) (p,wp,bp)
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
                                    | not (isLegal (Q (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (Q (c1,i1))))
+                                   | taken (c2,i2) bp && p == White = (Black,(replace (Q (c1,i1)) (c2,i2) wp), delete (c2,i2) bp)
+                                   | taken (c2,i2) wp && p == Black = (White, delete (c2,i2) wp ,(replace (Q (c1,i1)) (c2,i2) bp))
                                    | p == White = (Black, (replace (Q (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (Q (c1,i1)) (c2,i2) bp))
 
@@ -359,6 +368,8 @@ move (R (c1,i1)) (c2,i2) (p,wp,bp)
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
                                    | not (isLegal (R (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (R (c1,i1))))
+                                   | taken (c2,i2) bp && p == White = (Black,(replace (R (c1,i1)) (c2,i2) wp), delete (c2,i2) bp)
+                                   | taken (c2,i2) wp && p == Black = (White, delete (c2,i2) wp ,(replace (R (c1,i1)) (c2,i2) bp))
                                    | p == White = (Black, (replace (R (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (R (c1,i1)) (c2,i2) bp))
 
@@ -366,6 +377,8 @@ move (B (c1,i1)) (c2,i2) (p,wp,bp)
                                    | taken (c1,i1) bp && p == White = error "This is White player's turn, Black can't move."
                                    | taken (c1,i1) wp && p == Black = error "This is Black player's turn, White can't move."
                                    | not (isLegal (B (c1,i1)) (p,wp,bp) (c2,i2)) = error ("Illegal move for piece " ++ (show (B (c1,i1))))
+                                   | taken (c2,i2) bp && p == White = (Black,(replace (B (c1,i1)) (c2,i2) wp), delete (c2,i2) bp)
+                                   | taken (c2,i2) wp && p == Black = (White, delete (c2,i2) wp ,(replace (B (c1,i1)) (c2,i2) bp))
                                    | p == White = (Black, (replace (B (c1,i1)) (c2,i2) wp) ,bp)
                                    | otherwise = (White,wp,(replace (B (c1,i1)) (c2,i2) bp))
 
@@ -411,6 +424,29 @@ replace (B (c1, i1)) (c2,i2) ((B (c3,i3)) : t ) | c3 == c1 && i3 == i1 = ((B (c2
 replace p l (h:t) = (h : replace p l t) 
 
 
+delete _ [] = []
+
+delete (col1,row1) ((P (col2,row2)):t) | col1 == col2 && row1 == row2 = t
+                                       | otherwise = ((P (col2,row2)) : (delete (col1,row1) t))
+
+delete (col1,row1) ((N (col2,row2)):t) | col1 == col2 && row1 == row2 = t
+                                       | otherwise = ((N (col2,row2)) : (delete (col1,row1) t))
+
+delete (col1,row1) ((K (col2,row2)):t) | col1 == col2 && row1 == row2 = t
+                                       | otherwise = ((K (col2,row2)) : (delete (col1,row1) t))
+
+delete (col1,row1) ((Q (col2,row2)):t) | col1 == col2 && row1 == row2 = t
+                                       | otherwise = ((Q (col2,row2)) : (delete (col1,row1) t))
+
+delete (col1,row1) ((R (col2,row2)):t) | col1 == col2 && row1 == row2 = t
+                                       | otherwise = ((R (col2,row2)) : (delete (col1,row1) t))
+
+delete (col1,row1) ((B (col2,row2)):t) | col1 == col2 && row1 == row2 = t
+                                       | otherwise = ((B (col2,row2)) : (delete (col1,row1) t))
+
+                                
+
+    
 
 
 -- move (N ('b',3)) ('d',4) (White, [R ('h',1),N ('g',1),B ('f',1),
